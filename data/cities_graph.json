@@ -1,0 +1,19 @@
+{
+  "nodes": ["A", "B", "C", "D", "E"],
+  "edges": [
+    {"from": "A", "to": "B", "distance": 10, "traffic": 1.0, "tolls": 0, "safety": 0.9},
+    {"from": "A", "to": "C", "distance": 15, "traffic": 1.5, "tolls": 5, "safety": 0.8},
+    {"from": "B", "to": "C", "distance": 5, "traffic": 1.2, "tolls": 0, "safety": 0.95},
+    {"from": "B", "to": "D", "distance": 20, "traffic": 2.0, "tolls": 10, "safety": 0.7},
+    {"from": "C", "to": "D", "distance": 8, "traffic": 1.0, "tolls": 0, "safety": 0.9},
+    {"from": "C", "to": "E", "distance": 25, "traffic": 1.8, "tolls": 15, "safety": 0.85},
+    {"from": "D", "to": "E", "distance": 12, "traffic": 1.3, "tolls": 0, "safety": 0.9}
+  ],
+  "heuristics": {
+    "A": 30,
+    "B": 25,
+    "C": 20,
+    "D": 10,
+    "E": 0
+  }
+}
