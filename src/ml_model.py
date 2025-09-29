@@ -1,17 +1,22 @@
 import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
+import numpy as np
 
 class TrafficPredictor:
     def __init__(self, data_path):
         # Load data
-        self.data = pd.read_csv(data_path)
-        self.data.set_index(['hour', 'day_of_week'], inplace=True)
+        data = pd.read_csv(data_path)
+        self.X = data[['hour', 'day_of_week']]
+        self.y = data['traffic_multiplier']
+        # Train model
+        self.model = RandomForestRegressor(n_estimators=100, random_state=42)  # 100 trees for better accuracy
+        self.model.fit(self.X, self.y)
+        self.feature_names = ['hour', 'day_of_week']
 
     def predict(self, hour, day_of_week):
-        # Lookup traffic multiplier, default to 1.0 if not found
-        try:
-            return max(1.0, self.data.loc[(hour, day_of_week), 'traffic_multiplier'])
-        except KeyError:
-            return 1.0
+        # Predict traffic multiplier using DataFrame to avoid feature name issues
+        input_data = pd.DataFrame([[hour, day_of_week]], columns=self.feature_names)
+        return max(1.0, self.model.predict(input_data)[0])
 
 # Test the model
 if __name__ == "__main__":

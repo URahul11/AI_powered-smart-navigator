@@ -3,10 +3,15 @@ from graph import load_graph
 from algorithms import dijkstra, a_star, greedy_best_first, tsp
 from ml_model import TrafficPredictor
 from visualization import visualize_graph
+import os
 
 def main():
     st.title("AI Smart Navigator")
     
+    # Initialize session state
+    if 'intermediates' not in st.session_state:
+        st.session_state.intermediates = []
+
     # Load traffic predictor
     predictor = TrafficPredictor('data/traffic_data.csv')
     
@@ -20,17 +25,21 @@ def main():
     end = st.sidebar.selectbox("End City", options=['A', 'B', 'C', 'D', 'E'])
     algo = st.sidebar.selectbox("Algorithm", options=['dijkstra', 'a_star', 'greedy', 'tsp'])
     
-    intermediates = []
+    # Intermediate cities input, managed with session state
     if algo == 'tsp':
-        intermediates_input = st.sidebar.text_input("Intermediate Cities (comma-separated, e.g., B,C)", "")
+        intermediates_input = st.sidebar.text_input("Intermediate Cities (comma-separated, e.g., B,C)", 
+                                                   value="" if not st.session_state.intermediates else ", ".join(st.session_state.intermediates))
         if intermediates_input:
-            intermediates = [city.strip() for city in intermediates_input.split(',')]
+            st.session_state.intermediates = [city.strip() for city in intermediates_input.split(',') if city.strip()]
+        else:
+            st.session_state.intermediates = []
     
     # Load graph
     G, heuristics = load_graph('data/cities_graph.json', predictor, hour, day_of_week)
     
-    # Run algorithm
+    # Run algorithm on button click
     if st.sidebar.button("Find Route"):
+        intermediates = st.session_state.intermediates
         if algo == 'dijkstra':
             path, distance = dijkstra(G, start, end)
         elif algo == 'a_star':
@@ -45,6 +54,12 @@ def main():
             st.write(f"**Path**: {path}")
             st.write(f"**Total Distance (adjusted for traffic)**: {distance:.2f} km")
             visualize_graph(G, path, title=f"{algo.capitalize()} Path with Traffic")
+            # Display the saved image
+            image_path = f"{algo.capitalize()}_Path_with_Traffic.png"
+            if os.path.exists(image_path):
+                st.image(image_path, caption=f"{algo.capitalize()} Path Visualization", width='stretch')
+            else:
+                st.write("Visualization image not generated yet.")
         else:
             st.write(f"No path from {start} to {end}")
 

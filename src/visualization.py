@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 
 # Set interactive backend
-matplotlib.use('TkAgg')  # Use Tkinter backend for Windows
+matplotlib.use('Agg')  # Use Agg backend for saving files (non-interactive)
 
 def visualize_graph(G, path=None, title="City Graph"):
     # Create figure
@@ -32,7 +32,8 @@ def visualize_graph(G, path=None, title="City Graph"):
     
     plt.title(title)
     plt.axis('off')
-    plt.show()  # Should now display
+    plt.savefig(f"{title.replace(' ', '_')}.png")  # Save plot to file
+    plt.close()  # Close figure to free memory
 
 # Test visualization
 if __name__ == "__main__":
